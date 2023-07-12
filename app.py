@@ -1,21 +1,26 @@
 from flask import Flask, render_template, request
-import boto3
+import boto3 
 
 app = Flask(__name__)
-dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')  # Replace with your desired region
-table_name = 'Demotable'  # Replace with your DynamoDB table name
+dynamodb = boto3.resource('dynamodb')  # Replace with your desired region
+table_name = 'demo-table'  # Replace with your DynamoDB table name
 table = dynamodb.Table(table_name)
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
+
 @app.route('/submit', methods=['POST'])
 def submit():
     name = request.form.get('name')
     age = int(request.form.get('age'))
     print(name+" " +str(age));
+   
     table.put_item(Item={'name': name, 'age': age})
+    
+
     return 'Data stored successfully in DynamoDB'
 
 @app.route('/usercount', methods=['GET', 'POST'])
